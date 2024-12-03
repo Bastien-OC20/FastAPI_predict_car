@@ -122,3 +122,6 @@ def authenticate_user_by_nom(db: Session, nom: str, password: str):
     if not verify_password(password, user.hashed_password):
         return False
     return user
+
+
+
