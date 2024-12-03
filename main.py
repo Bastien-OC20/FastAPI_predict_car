@@ -33,6 +33,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8000",
+    "https://fastapi-predict-car.onrender.com",
 ]
 
 app.add_middleware(
@@ -69,6 +70,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 @app.get("/")
 def read_root():
+    return {"message": "Bienvenue sur l'API de prédiction de prix de voitures"}
+
+@app.head("/")
+def read_root_head():
     return {"message": "Bienvenue sur l'API de prédiction de prix de voitures"}
 
 @app.get("/vehicules/", response_model=list[schemas.Vehicule])
