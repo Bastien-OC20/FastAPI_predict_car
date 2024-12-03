@@ -1,14 +1,9 @@
+import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Informations de connexion
-DB_HOST = "mysql-babaste.alwaysdata.net"
-DB_USER = "babaste"
-DB_PASSWORD = "Simplon"
-DB_NAME = "babaste_predict_car"
-DB_PORT = 3306
-
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+# Charger la variable d'environnement DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

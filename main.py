@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -9,6 +10,9 @@ from sqlalchemy.orm import Session
 import joblib
 import pandas as pd
 import logging
+
+# Charger les variables d'environnement depuis le fichier .env
+load_dotenv()
 
 # Import des modules locaux
 import models, schemas, crud
@@ -43,7 +47,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Dépendance pour obtenir une session DB
 def get_db():
     db = SessionLocal()
@@ -52,14 +55,11 @@ def get_db():
     finally:
         db.close()
 
-
 # Charger les modèles nécessaires
 Gradient_Boosting_model = joblib.load("./models/pkl/Gradient_Boosting_model.pkl")
 Logistic_Regression_model = joblib.load("./models/pkl/Logistic_Regression_model.pkl")
 
-# OAuth2 configuration
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -70,7 +70,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -90,22 +89,18 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     return user
 
-
 # Routes
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
 
-
 @app.head("/")
 def read_root_head():
     return {"message": "Bienvenue sur l'API de prédiction de prix de voitures"}
 
-
 @app.get("/vehicules/", response_model=list[schemas.Vehicule])
 def read_vehicules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_vehicules(db, skip=skip, limit=limit)
-
 
 @app.get("/vehicules/{vehicule_id}", response_model=schemas.Vehicule)
 def read_vehicule(vehicule_id: int, db: Session = Depends(get_db)):
@@ -114,11 +109,9 @@ def read_vehicule(vehicule_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Véhicule non trouvé")
     return vehicule
 
-
 @app.post("/vehicules/", response_model=schemas.Vehicule, status_code=201)
 def create_vehicule(vehicule: schemas.VehiculeCreate, db: Session = Depends(get_db)):
     return crud.create_vehicule(db=db, vehicule=vehicule)
-
 
 @app.put("/vehicules/{vehicule_id}", response_model=schemas.Vehicule)
 def update_vehicule(
@@ -133,12 +126,9 @@ def update_vehicule(
         raise HTTPException(status_code=404, detail="Véhicule non trouvé")
     return db_vehicule
 
-
 @app.delete("/vehicules/{vehicule_id}", response_model=dict)
 def delete_vehicule(vehicule_id: int, db: Session = Depends(get_db)):
     return crud.delete_vehicule(db=db, vehicule_id=vehicule_id)
-
-
 
 @app.post("/predict")
 def predict(request: schemas.PredictRequest):
@@ -165,7 +155,6 @@ def predict(request: schemas.PredictRequest):
         logging.error(f"Erreur lors de la prédiction : {e}")
         raise HTTPException(status_code=400, detail="Erreur lors de la prédiction")
 
-
 @app.post("/token", response_model=schemas.Token)
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
@@ -183,11 +172,9 @@ def login_for_access_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-
 @app.get("/users/me", response_model=schemas.User)
 def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
-
 
 if __name__ == "__main__":
     import uvicorn

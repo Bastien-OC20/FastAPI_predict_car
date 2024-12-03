@@ -6,11 +6,11 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: SECRET_KEY
-        value: your_secret_key
+        value: "generated_secret_key"
       - key: DATABASE_URL
-        value: your_database_url
+        value: "mysql+pymysql://babaste:Simplon@mysql-babaste.alwaysdata.net:3306/babaste_predict_car"
       - key: ENV
-        value: production
+        value: "production"
     healthCheckPath: /
     autoDeploy: true
     plan: free
