@@ -53,18 +53,9 @@ def get_db():
         db.close()
 
 
-# Charger les modèles de machine learning
-try:
-    Gradient_Boosting_model = joblib.load("./models/pkl/Gradient_Boosting_model.pkl")
-    Logistic_Regression_model = joblib.load(
-        "./models/pkl/Logistic_Regression_model.pkl"
-    )
-    logging.info("Les modèles ont été chargés avec succès.")
-except FileNotFoundError as e:
-    logging.error(f"Erreur lors du chargement des modèles : {e}")
-    raise RuntimeError(
-        "Impossible de charger les modèles, vérifiez les chemins des fichiers."
-    )
+# Charger les modèles nécessaires
+Gradient_Boosting_model = joblib.load("./models/pkl/Gradient_Boosting_model.pkl")
+Logistic_Regression_model = joblib.load("./models/pkl/Logistic_Regression_model.pkl")
 
 # OAuth2 configuration
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -72,7 +63,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -89,7 +83,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-    except jwt.PyJWTError:
+    except JWTError:
         raise credentials_exception
     user = crud.get_user_by_nom(db, username=username)
     if user is None:

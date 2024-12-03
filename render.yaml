@@ -1,6 +1,16 @@
 services:
   - type: web
-    name: my-fastapi-app
-    env: python
+    name: fastapi-predict-car
+    runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $POR
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        value: your_secret_key
+      - key: DATABASE_URL
+        value: your_database_url
+      - key: ENV
+        value: production
+    healthCheckPath: /
+    autoDeploy: true
+    plan: free
