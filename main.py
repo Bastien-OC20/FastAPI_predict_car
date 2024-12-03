@@ -14,7 +14,7 @@ import pandas as pd
 import logging
 from utils import get_password_hash, verify_password
 
-SECRET_KEY = "your_secret_key"
+SECRET_KEY = os.getenv("SECRET_KEY", " your_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -70,7 +70,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 @app.get("/")
 def read_root():
-    return {"message": "Bienvenue sur l'API de prédiction de prix de voitures"}
+    return {"message": "Hello World"}
 
 @app.head("/")
 def read_root_head():
