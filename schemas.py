@@ -79,22 +79,23 @@ class Vehicule(VehiculeBase):
     class Config:
         from_attribute = True
 
+
 class UserBase(BaseModel):
-    nom: str
     email: EmailStr
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
+    nom: str
+    is_active: bool = True
+    is_superuser: bool = False
     profile_image: Optional[str] = None
+
 
 class UserCreate(UserBase):
     password: str
 
 class UserUpdate(UserBase):
-    password: Optional[str] = None
+    password: str
 
 class User(UserBase):
     id: int
-    is_active: bool
 
     class Config:
         from_attribute = True
@@ -107,3 +108,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+
+class UpdatePassword(BaseModel):
+    email: EmailStr
+    new_password: str

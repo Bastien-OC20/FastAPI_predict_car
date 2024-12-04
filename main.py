@@ -241,6 +241,23 @@ def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     return new_user
 
+
+@app.post("/update-password")
+def update_password(email: str, new_password: str, db: Session = Depends(get_db)):
+    # Vérifier si l'utilisateur existe
+    db_user = crud.get_user_by_email(db, email=email)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+
+    # Mettre à jour le mot de passe
+    hashed_password = get_password_hash(new_password)
+    db_user.password = hashed_password
+    db.commit()
+    db.refresh(db_user)
+
+    return {"message": "Mot de passe mis à jour avec succès"}
+
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
