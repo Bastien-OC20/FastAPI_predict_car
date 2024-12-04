@@ -12,8 +12,8 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(plain_password: str, password: str) -> bool:
+    return pwd_context.verify(plain_password, password)
 
 
 def get_password_hash(password: str) -> str:
@@ -84,8 +84,8 @@ def get_user(db: Session, user_id: int):
 
 # Fonction pour créer un utilisateur
 def create_user(db: Session, user: schemas.UserCreate):
-    hashed_password = get_password_hash(user.password)
-    db_user = models.User(nom=user.nom, email=user.email, hashed_password=hashed_password)
+    password = get_password_hash(user.password)
+    db_user = models.User(nom=user.nom, email=user.email, password=password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -125,6 +125,6 @@ def authenticate_user_by_nom(db: Session, username: str, password: str):
     user = get_user_by_nom(db, username)
     if not user:
         return False
-    if not pwd_context.verify(password, user.hashed_password):
+    if not pwd_context.verify(password, user.password):
         return False
     return user
