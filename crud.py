@@ -112,16 +112,19 @@ def delete_user(db: Session, user_id: int):
     db.commit()
     return {"message": "Utilisateur supprimé avec succès"}
 
+
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-def authenticate_user_by_nom(db: Session, nom: str, password: str):
-    user = db.query(models.User).filter(models.User.nom == nom).first()
+
+def get_user_by_nom(db: Session, username: str):
+    return db.query(models.User).filter(models.User.nom == username).first()
+
+
+def authenticate_user_by_nom(db: Session, username: str, password: str):
+    user = get_user_by_nom(db, username)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not pwd_context.verify(password, user.hashed_password):
         return False
     return user
-
-
-

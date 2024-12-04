@@ -37,7 +37,9 @@ app = FastAPI()
 # Configurer CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Autoriser toutes les origines
+    allow_origins=[
+        "https://fastapi-predict-car.onrender.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -64,6 +66,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 def read_root():
     return {"message": "Bienvenue sur l'API de prédiction de prix de voitures"}
 
+
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
@@ -71,8 +74,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(

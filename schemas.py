@@ -94,10 +94,10 @@ class UserUpdate(UserBase):
 
 class User(UserBase):
     id: int
+    is_active: bool
 
     class Config:
         from_attribute = True
-        
 
 
 class Token(BaseModel):
@@ -106,4 +106,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    nom: str | None = None
+    username: Optional[str] = None

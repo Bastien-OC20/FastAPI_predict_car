@@ -60,7 +60,7 @@ class User(Base):
     id = Column("ID_User", Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     nom = Column(String, nullable=False)
-    password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
     is_active = Column("Is_Active", Boolean, nullable=False, default=True)
     is_superuser = Column("Is_Superuser", Boolean, nullable=False, default=False)
     profile_image = Column("Profile_Image", String, nullable=True)
