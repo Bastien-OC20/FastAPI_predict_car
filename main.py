@@ -33,15 +33,15 @@ logging.basicConfig(
 app = FastAPI()
 
 # Configurer CORS
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins = [
+origins = [
     "http://localhost",
     "http://localhost:8000",
     "https://fastapi-predict-car.onrender.com",
-    ],
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -175,6 +175,10 @@ def login_for_access_token(
 @app.get("/users/me", response_model=schemas.User)
 def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     import uvicorn
