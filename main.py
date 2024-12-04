@@ -34,15 +34,10 @@ logging.basicConfig(
 app = FastAPI()
 
 # Configurer CORS
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-    "https://fastapi-predict-car.onrender.com",
-]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,7 +45,6 @@ app.add_middleware(
 
 # Monter le dossier static pour servir le fichier favicon.ico
 app.mount("/static/", StaticFiles(directory="static"), name="static")
-
 
 # Dépendance pour obtenir une session DB
 def get_db():
@@ -93,72 +87,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credentials_exception
     return user
-
-# Routes
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
-
-@app.head("/")
-def read_root_head():
-    return {"message": "Bienvenue sur l'API de prédiction de prix de voitures"}
-
-@app.get("/vehicules/", response_model=list[schemas.Vehicule])
-def read_vehicules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    return crud.get_vehicules(db, skip=skip, limit=limit)
-
-@app.get("/vehicules/{vehicule_id}", response_model=schemas.Vehicule)
-def read_vehicule(vehicule_id: int, db: Session = Depends(get_db)):
-    vehicule = crud.get_vehicule(db, vehicule_id=vehicule_id)
-    if vehicule is None:
-        raise HTTPException(status_code=404, detail="Véhicule non trouvé")
-    return vehicule
-
-@app.post("/vehicules/", response_model=schemas.Vehicule, status_code=201)
-def create_vehicule(vehicule: schemas.VehiculeCreate, db: Session = Depends(get_db)):
-    return crud.create_vehicule(db=db, vehicule=vehicule)
-
-@app.put("/vehicules/{vehicule_id}", response_model=schemas.Vehicule)
-def update_vehicule(
-    vehicule_id: int,
-    vehicule_update: schemas.VehiculeUpdate,
-    db: Session = Depends(get_db),
-):
-    db_vehicule = crud.update_vehicule(
-        db=db, vehicule_id=vehicule_id, vehicule_update=vehicule_update
-    )
-    if db_vehicule is None:
-        raise HTTPException(status_code=404, detail="Véhicule non trouvé")
-    return db_vehicule
-
-@app.delete("/vehicules/{vehicule_id}", response_model=dict)
-def delete_vehicule(vehicule_id: int, db: Session = Depends(get_db)):
-    return crud.delete_vehicule(db=db, vehicule_id=vehicule_id)
-
-@app.post("/predict")
-def predict(request: schemas.PredictRequest):
-    try:
-        # Convertir les données en DataFrame
-        input_data = pd.DataFrame([request.dict()])
-        logging.info(f"Données d'entrée : {input_data}")
-
-        # Renommer les colonnes
-        input_data = input_data.rename(columns=str.capitalize)
-        logging.info(f"Données renommees : {input_data}")
-
-        # Faire les prédictions
-        rf_prediction = Gradient_Boosting_model.predict(input_data)[0]
-        lr_prediction = Logistic_Regression_model.predict(input_data)[0]
-
-        price_evaluation = "Abordable" if lr_prediction == 1 else "Pas abordable"
-
-        return {
-            "Gradient_Boosting_prediction": float(rf_prediction),
-            "Logistic_Regression_evaluation": price_evaluation,
-        }
-    except Exception as e:
-        logging.error(f"Erreur lors de la prédiction : {e}")
-        raise HTTPException(status_code=400, detail="Erreur lors de la prédiction")
 
 @app.post("/token", response_model=schemas.Token)
 def login_for_access_token(
