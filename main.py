@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -46,6 +47,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Monter le dossier static pour servir le fichier favicon.ico
+app.mount("./static/", StaticFiles(directory="static"), name="static")
+
 
 # Dépendance pour obtenir une session DB
 def get_db():
