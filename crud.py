@@ -124,7 +124,7 @@ def get_user_by_nom(db: Session, username: str):
 def authenticate_user_by_nom(db: Session, username: str, password: str):
     user = get_user_by_nom(db, username)
     if not user:
-        return False
-    if not pwd_context.verify(password, user.password):
-        return False
+        return None
+    if not pwd_context.verify(password, user.password):  # Utilisez 'password' au lieu de 'hashed_password'
+        return None
     return user

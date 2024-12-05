@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 import joblib
 import pandas as pd
 import logging
+from utils import get_password_hash, verify_password  # Importer les fonctions de hachage
 
 # Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
@@ -19,7 +20,6 @@ load_dotenv()
 # Import des modules locaux
 import models, schemas, crud
 from database import SessionLocal, engine
-from utils import get_password_hash, verify_password
 
 # Configuration des variables globales
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")
@@ -74,6 +74,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
