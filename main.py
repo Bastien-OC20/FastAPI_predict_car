@@ -250,8 +250,8 @@ def update_password(email: str, new_password: str, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
     # Mettre à jour le mot de passe
-    hashed_password = get_password_hash(new_password)
-    db_user.password = hashed_password
+    password = get_password_hash(new_password)
+    db_user.password = password
     db.commit()
     db.refresh(db_user)
 
