@@ -79,17 +79,92 @@ class PredictRequest(BaseModel):
 class VehiculeUpdate(VehiculeBase):
     pass
 
-class Vehicule(VehiculeBase):
+class CarburantBase(BaseModel):
     id: int
-    carburant: Optional[Carburant] = None
-    transmission: Optional[Transmission] = None
-    modele: Optional[Modele] = None
-    marque: Optional[Marque] = None
-    finition: Optional[Finition] = None
+    type: str
 
     class Config:
         from_attribute = True
 
+class TransmissionBase(BaseModel):
+    id: int
+    type: str
+
+    class Config:
+        from_attribute = True
+
+class MarqueBase(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        from_attribute = True
+
+class ModeleBase(BaseModel):
+    id: int
+    name: str
+    marque_id: int
+
+    class Config:
+        from_attribute = True
+
+class FinitionBase(BaseModel):
+    id: int
+    name: str
+    marque_id: int
+
+    class Config:
+        from_attribute = True
+
+class Vehicule(BaseModel):
+    id: int
+    annee: int
+    kilometrage: float
+    prix: float
+    etat: str
+    marque_id: int
+    modele_id: int
+    finition_id: int
+    carburant_id: int
+    transmission_id: int
+    carburant: CarburantBase
+    transmission: TransmissionBase
+    modele: ModeleBase
+    marque: MarqueBase
+    finition: FinitionBase
+
+    class Config:
+        from_attribute = True
+
+class TransmissionBase(BaseModel):
+    id: int
+    type: str
+
+    class Config:
+        from_attribute = True
+
+class MarqueBase(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        from_attribute = True
+
+class ModeleBase(BaseModel):
+    id: int
+    name: str
+    marque_id: int
+
+    class Config:
+        from_attribute = True
+
+class FinitionBase(BaseModel):
+    id: int
+    name: str
+    marque_id: int
+
+    class Config:
+        from_attribute = True
 
 class UserBase(BaseModel):
     email: EmailStr

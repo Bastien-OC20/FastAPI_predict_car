@@ -10,6 +10,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 import joblib
+from catboost import CatBoostClassifier
 import pandas as pd
 import logging
 from utils import get_password_hash, verify_password  # Importer les fonctions de hachage
@@ -44,7 +45,7 @@ app.add_middleware(
 )
 
 # Monter le dossier static pour servir le fichier favicon.ico
-app.mount("/static/", StaticFiles(directory="static"), name="static")
+app.mount("./static/", StaticFiles(directory="static"), name="static")
 
 # Dépendance pour obtenir une session DB
 def get_db():
@@ -55,7 +56,13 @@ def get_db():
         db.close()
 
 # Charger les modèles nécessaires
-catboost_model = joblib.load("./models/pkl/catboost_model.pkl")
+try:
+    catboost_model = joblib.load("./models/pkl/catboost_model.pkl")
+except FileNotFoundError:
+    print("Le fichier catboost_model.pkl est introuvable.")
+except Exception as e:
+    print(f"Erreur lors du chargement du modèle CatBoost : {e}")
+
 Logistic_Regression_model = joblib.load("./models/pkl/Logistic_Regression_model.pkl")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
