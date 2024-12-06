@@ -42,6 +42,7 @@ def create_vehicule(db: Session, vehicule: schemas.VehiculeCreate):
         etat=vehicule.etat,
         marque_id=vehicule.marque_id,
         modele_id=vehicule.modele_id,
+        finition_id=vehicule.finition_id,
         carburant_id=vehicule.carburant_id,
         transmission_id=vehicule.transmission_id,
     )

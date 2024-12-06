@@ -15,6 +15,13 @@ class Transmission(BaseModel):
 
     class Config:
         from_attribute = True
+        
+class Finition(BaseModel):
+    id_finition: int
+    nom: str
+
+    class Config:
+        from_attribute = True
 
 class Marque(BaseModel):
     id_marque: int
@@ -38,6 +45,7 @@ class VehiculeBase(BaseModel):
     etat: Optional[str] = None
     marque_id: Optional[int] = None
     modele_id: Optional[int] = None
+    finition_id: Optional[int] = None
     carburant_id: Optional[int] = None
     transmission_id: Optional[int] = None
 
@@ -48,6 +56,7 @@ class PredictRequest(BaseModel):
     kilometrage: float
     annee: int
     marque: str
+    finition: str
     carburant: str
     transmission: str
     modele: str
@@ -59,6 +68,7 @@ class PredictRequest(BaseModel):
                 "kilometrage": 15000,
                 "annee": 2019,
                 "marque": "Peugeot",
+                "finition": "Active",
                 "carburant": "Essence",
                 "transmission": "Manuelle",
                 "modele": "208",
@@ -75,6 +85,7 @@ class Vehicule(VehiculeBase):
     transmission: Optional[Transmission] = None
     modele: Optional[Modele] = None
     marque: Optional[Marque] = None
+    finition: Optional[Finition] = None
 
     class Config:
         from_attribute = True

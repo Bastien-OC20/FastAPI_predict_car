@@ -11,6 +11,7 @@ class Vehicule(Base):
     etat = Column("Etat", String)
     marque_id = Column("Marque_ID", Integer, ForeignKey("Marque.ID_Marque"), index=True)
     modele_id = Column("Modele_ID", Integer, ForeignKey("Modele.ID_Modele"), index=True)
+    finition_id = Column("Finition_ID", Integer, ForeignKey("Finition.ID_Finition"), index=True)
     carburant_id = Column("Carburant_ID", Integer, ForeignKey("Carburant.ID_Carburant"), index=True)
     transmission_id = Column("Transmission_ID", Integer, ForeignKey("Transmission.ID_Transmission"), index=True)
 
@@ -19,6 +20,7 @@ class Vehicule(Base):
     transmission = relationship("Transmission", back_populates="vehicules", lazy="joined")
     modele = relationship("Modele", back_populates="vehicules", lazy="joined")
     marque = relationship("Marque", back_populates="vehicules", lazy="joined")
+    finition = relationship("Finition", back_populates="vehicules", lazy="joined")
 
 class Carburant(Base):
     __tablename__ = "Carburant"
@@ -39,6 +41,11 @@ class Transmission(Base):
 class Marque(Base):
     __tablename__ = "Marque"
     id_marque = Column("ID_Marque", Integer, primary_key=True, index=True)
+    nom = Column(String, nullable=False)
+    
+class Finition (Base):
+    __tablename__ = "Finition"
+    id_finition = Column("ID_Finition", Integer, primary_key=True, index=True)  
     nom = Column(String, nullable=False)
     
     # Relations inverses
