@@ -55,7 +55,7 @@ def get_db():
         db.close()
 
 # Charger les modèles nécessaires
-Gradient_Boosting_model = joblib.load("./models/pkl/catboost_model.pkl")
+CatBoost_model = joblib.load("./models/pkl/catboost_model.pkl")
 Logistic_Regression_model = joblib.load("./models/pkl/Logistic_Regression_model.pkl")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -183,6 +183,7 @@ def predict(request: schemas.PredictRequest):
                 "kilometrage": "Kilometrage",
                 "annee": "Annee",
                 "marque": "Marque",
+                "finition": "Finition",
                 "carburant": "Carburant",
                 "transmission": "Transmission",
                 "modele": "Modele",
@@ -191,9 +192,9 @@ def predict(request: schemas.PredictRequest):
         )
         logging.info(f"Input data with correct column names: {input_data}")
 
-        # Faire la prédiction directement avec le modèle Gradient Boosting
-        rf_prediction = Gradient_Boosting_model.predict(input_data)[0]
-        logging.info(f"Gradient Boosting prediction: {rf_prediction}")
+        # Faire la prédiction directement avec le modèle CatBoosting
+        cb_prediction = CatBoost_model.predict(input_data)[0]
+        logging.info(f"CatBoost prediction: {cb_prediction}")
 
         # Faire la prédiction directement avec le modèle de régression logistique
         lr_prediction = Logistic_Regression_model.predict(input_data)[0]
@@ -203,7 +204,7 @@ def predict(request: schemas.PredictRequest):
         price_evaluation = "Abordable" if lr_prediction == 1 else "Pas abordable"
 
         return {
-            "Gradient_Boosting_prediction": float(rf_prediction),
+            "CatBoost_prediction": float(cb_prediction),
             "Logistic_Regression_evaluation": price_evaluation,
         }
 
