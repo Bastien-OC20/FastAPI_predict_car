@@ -55,7 +55,7 @@ def get_db():
         db.close()
 
 # Charger les modèles nécessaires
-CatBoost_model = joblib.load("./models/pkl/catboost_model.pkl")
+catboost_model = joblib.load("./models/pkl/catboost_model.pkl")
 Logistic_Regression_model = joblib.load("./models/pkl/Logistic_Regression_model.pkl")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -193,7 +193,7 @@ def predict(request: schemas.PredictRequest):
         logging.info(f"Input data with correct column names: {input_data}")
 
         # Faire la prédiction directement avec le modèle CatBoosting
-        cb_prediction = CatBoost_model.predict(input_data)[0]
+        cb_prediction = catboost_model.predict(input_data)[0]
         logging.info(f"CatBoost prediction: {cb_prediction}")
 
         # Faire la prédiction directement avec le modèle de régression logistique
@@ -204,7 +204,7 @@ def predict(request: schemas.PredictRequest):
         price_evaluation = "Abordable" if lr_prediction == 1 else "Pas abordable"
 
         return {
-            "CatBoost_prediction": float(cb_prediction),
+            "catboost_prediction": float(cb_prediction),
             "Logistic_Regression_evaluation": price_evaluation,
         }
 
