@@ -55,7 +55,7 @@ def get_db():
         db.close()
 
 # Charger les modèles nécessaires
-Gradient_Boosting_model = joblib.load("./models/pkl/Gradient_Boosting_model.pkl")
+Gradient_Boosting_model = joblib.load("./models/pkl/catboost_model.pkl")
 Logistic_Regression_model = joblib.load("./models/pkl/Logistic_Regression_model.pkl")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
