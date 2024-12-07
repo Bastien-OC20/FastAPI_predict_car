@@ -68,7 +68,7 @@ class User(Base):
     __tablename__ = "Users"
     id = Column("ID_User", Integer, primary_key=True, index=True)
     email = Column("Email", String, unique=True, index=True, nullable=False)
-    name = Column("Nom", String, nullable=False)
+    nom = Column("Nom", String, nullable=False)
     password = Column("Password", String, nullable=False)
     is_active = Column("Is_Active", Boolean, default=True)
     is_superuser = Column("Is_Superuser", Boolean, default=False)
