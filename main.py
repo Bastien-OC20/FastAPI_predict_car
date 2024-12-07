@@ -45,7 +45,7 @@ app.add_middleware(
 )
 
 # Monter le dossier static pour servir le fichier favicon.ico
-app.mount("./static/", StaticFiles(directory="static"), name="static")
+app.mount("/static/", StaticFiles(directory="static"), name="static")
 
 # Dépendance pour obtenir une session DB
 def get_db():
